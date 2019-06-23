@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chess</title>
+	<style type="text/css">
+		canvas {
+			border: 10px solid #fce9db;
+		}
+	</style>
+</head>
+<body>
+	<h1>A Game of Chess</h1>
+	<canvas id="myCanvas" height=400 width=400></canvas>
+	<br>
+	<span>
+		<input type="textbox" name="command" id="commandbox">
+		<button onclick="submitCommand()">Submit Command</button>
+	</span>
+	<div id="interpretedcommand"></div>
+	<script type="text/javascript" src="chess.js"></script>
+</body>
+</html>
