@@ -70,19 +70,10 @@ positions[0][1] = "blackknight";
 positions[0][6] = "blackknight";
 positions[0][2] = "blackbishop";
 positions[0][5] = "blackbishop";
-positions[0][3] = "blackqueen";
-positions[0][4] = "blackking";
+positions[0][4] = "blackqueen";
+positions[0][3] = "blackking";
 
 ///game logic (commands)
-function submitCommand() {
-	let commandbox = document.getElementById("commandbox");
-	let command = commandbox.value;
-	commandbox.value = "";
-	//actual logic call
-
-	let outputbox = document.getElementById("interpretedcommand");
-	outputbox.innerHTML = returnStringCommand(command)
-}
 
 function letterToPieceName(letter) {
 	switch(letter.toLowerCase()) {
@@ -118,7 +109,7 @@ function returnStringCommand(command) {
 		let square = command.substring(0, 2);
 		return letterToPieceName(piece) + " to " + square;
 	}
-	else if (/^[abcdefgh]x[abcdefgh][0-8]\+?$/i) {
+	else if (/^[abcdefgh]x[abcdefgh][0-8]\+?$/i.test(command)) {
 		let file = command[0];
 		let square = command.substring(2, 4);
 		return file + "-file pawn takes " + square

@@ -1,6 +1,6 @@
 #Chess
 
-This is a personal implementation of the game of chess. It's mostly for me to play around with JavaScript and HTML5 canvases, plus a little bit of AI/logic stuff.
+This is a personal implementation of the game of chess. It's mostly for me to play around with JavaScript, plus a little bit of AI/logic stuff.
 
 ##Reference Materials
 

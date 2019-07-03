@@ -1,0 +1,39 @@
+#gamelog-sidebar {
+  height: 100%;
+  width: 300px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  background-color: grey;
+  overflow-x: hidden;
+}
+
+h2 {
+	font-size: 20;
+	color: #ddd;
+}
+
+#gamelog {
+	padding: 20px;
+}
+
+table {
+	width: 100%
+}
+
+th {
+	border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+	background-color: #f5f5f5;
+}
+
+canvas {
+	border: 10px solid #fce9db;
+}
+
+#hider {
+	background-color: transparent;
+}
