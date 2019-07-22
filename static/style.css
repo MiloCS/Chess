@@ -1,0 +1,78 @@
+html {
+	font-family: Tahoma;
+}
+
+#gamelog-sidebar {
+  height: 100%;
+  width: 300px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  background-color: #1b2e8c;
+  overflow-x: hidden;
+  color: white;
+}
+
+h2 {
+	font-size: 20;
+}
+
+#gamelog {
+	padding: 20px;
+}
+
+table {
+	width: 100%
+}
+
+th {
+	border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+	background-color: #4a5ad4;
+}
+
+canvas {
+	border: 10px solid #fce9db;
+}
+
+#hider {
+	float: right;
+	padding-top: 10px;
+	padding-right: 10px;
+	cursor: pointer;
+	color: white;
+}
+
+#shower {
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	cursor: pointer;
+}
+
+div#loading {
+	display: inline-block;
+	border: 3px solid hsla(12, 100%, 77%, 1);
+	border-top-color: #de141e;
+	border-radius: 50%;
+	width: 0.7em;
+	height: 0.7em;
+	animation: spin 1s linear infinite;
+}
+
+div#waiting-text {
+	display: inline;
+}
+
+div#waiting {
+	padding-top: 10px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

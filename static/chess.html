@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chess</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	<i hidden title="show gamelog" id="shower" class="fa fa-plus"></i>
+	<h1>A Game of Chess</h1>
+	<canvas id="myCanvas" height=400 width=400></canvas>
+	<br>
+	<span>
+		<input type="textbox" name="command" id="commandbox">
+		<button id="submitcommand">Submit Command</button>
+	</span>
+	<div>
+		<div id="interpretedcommand"></div>
+		<div id="waiting" hidden>
+			<div id="waiting-text">Waiting for server response</div>
+			<div id="loading"></div>
+		</div>
+	</div>
+	<div id="gamelog-sidebar">
+		<i id="hider" class="fa fa-minus"></i>
+		<div id="gamelog">
+		<h2>Game Log</h2>
+		<table>
+			<tr>
+				<th>Player</th>
+				<th>Computer</th>
+			</tr>
+		</table>
+		</div>
+	</div>
+	<script type="text/javascript" src="./chess.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="./relay.js"></script>
+</body>
+</html>
