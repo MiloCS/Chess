@@ -7,6 +7,8 @@ ctx.font = "10px Arial"
 let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 let numbers = [8, 7, 6, 5, 4, 3, 2, 1]
 
+const borderwidth = 10;
+
 const width = canvas.width;
 const height = canvas.height;
 
@@ -14,6 +16,8 @@ const squarewidth = width/8;
 const squareheight = height/8
 const white = true;
 let positions;
+
+let lastClick = null
 
 function toCoordinates(letter, number) {
 	return {x: numbers.indexOf(number), y: letters.indexOf(letter)}
@@ -34,28 +38,28 @@ function initBoard() {
 
 	//piece initialization
 	for (let i=0; i<8; i++) {
-		positions[6][i] = 1; //1
+		positions[i][6] = 1; //1
 	}
-	positions[7][0] = 2; //2
+	positions[0][7] = 2; //2
 	positions[7][7] = 2;
-	positions[7][1] = 3; //3
-	positions[7][6] = 3; 
-	positions[7][2] = 4; //4
-	positions[7][5] = 4;
-	positions[7][3] = 6; //6
-	positions[7][4] = 5; //5
+	positions[1][7] = 3; //3
+	positions[6][7] = 3; 
+	positions[2][7] = 4; //4
+	positions[5][7] = 4;
+	positions[3][7] = 6; //6
+	positions[4][7] = 5; //5
 
 	for (let i=0; i<8; i++) {
-		positions[1][i] = -1; //-1
+		positions[i][1] = -1; //-1
 	}
-	positions[0][0] = -2; //-2
-	positions[0][7] = -2;
-	positions[0][1] = -3; //-3
-	positions[0][6] = -3;
-	positions[0][2] = -4; //-4
-	positions[0][5] = -4;
-	positions[0][4] = -5; //-5
-	positions[0][3] = -6; //-6
+	positions[0][0] = -2; //2
+	positions[7][0] = -2;
+	positions[1][0] = -3; //3
+	positions[6][0] = -3; 
+	positions[2][0] = -4; //4
+	positions[5][0] = -4;
+	positions[3][0] = -5; //6
+	positions[4][0] = -6;
 }
 
 ///game logic (commands)
@@ -111,14 +115,11 @@ function letterToPieceName(letter) {
 }
 
 function makeMove(start, end) {
-	console.log("move made")
-	console.log(start)
-	console.log(end)
 	let temp = positions[start.x][start.y];
 	positions[end.x][end.y] = temp;
-	positions[start.x][start.y] = 0;
-	console.log(positions);
-	redraw();
+	if (start.x !== end.x && start.y !== end.y) {
+		positions[start.x][start.y] = 0;
+	}
 }
 
 //regex to check for validity of any algebraic expression: /^(O-O-O|O-O|(([prnbqk]?x?)([abcdefgh]x?)[abcdefgh][0-8])\+?)$/i
@@ -157,39 +158,94 @@ function returnStringCommand(command) {
 }
 //spots to put the images
 
+function drawBlankSquare(i, j, isSelected=false) {
+	if (isSelected) {
+		ctx.fillStyle = "#c85548";
+		ctx.fillRect(i*squarewidth, j*squareheight, (i+1)*squarewidth, (j+1)*squareheight);
+		ctx.fillStyle = "white";
+		ctx.fillText(toAlgNotation(i, j), i*squarewidth + 5, (j+1)*squareheight - 5);
+	}
+	else if ((i+j)%2 == 0) {
+		ctx.fillStyle = "#665548";
+		ctx.fillRect(i*squarewidth, j*squareheight, (i+1)*squarewidth, (j+1)*squareheight);
+		ctx.fillStyle = "white";
+		ctx.fillText(toAlgNotation(i, j), i*squarewidth + 5, (j+1)*squareheight - 5);
+	}
+	else {
+		ctx.fillStyle = "#d3b6a0";
+		ctx.fillRect(i*squarewidth, j*squareheight, (i+1)*squarewidth, (j+1)*squareheight);
+		ctx.fillStyle = "black";
+		ctx.fillText(toAlgNotation(i, j), i*squarewidth + 5, (j+1)*squareheight - 5);
+	}
+}
+
+function drawPiece(i, j) {
+	let xcoord = i * squarewidth;
+	let ycoord = j * squareheight;
+	if (!(positions[i][j] == 0)) {
+		let filename = "images\\" + numToFileName(positions[i][j]) + ".png";
+		let image = new Image();
+		image.src = filename;
+		image.onload = function () {
+			ctx.drawImage(image, xcoord, ycoord, squarewidth, squareheight);
+		}
+	} 
+}
+
 function redraw() {
 	//redraw board too
+	canvas.width = canvas.width;
 	for (let i=0; i<8; i++) {
 		for (let j=0; j<8; j++) {
-			if ((i+j)%2 == 0) {
-				ctx.fillStyle = "#665548";
-				ctx.fillRect(i*squarewidth, j*squareheight, (i+1)*squarewidth, (j+1)*squareheight);
-				ctx.fillStyle = "white";
-				ctx.fillText(toAlgNotation(i, j), i*squarewidth + 5, (j+1)*squareheight - 5);
-			}
-			else {
-				ctx.fillStyle = "#d3b6a0";
-				ctx.fillRect(i*squarewidth, j*squareheight, (i+1)*squarewidth, (j+1)*squareheight);
-				ctx.fillStyle = "black";
-				ctx.fillText(toAlgNotation(i, j), i*squarewidth + 5, (j+1)*squareheight - 5);
-			}
+			drawBlankSquare(i, j);
 		}
 	}
 
 	for (let i=0; i<8; i++) {
-		let xcoord = i * squarewidth;
 		for (let j=0; j<8; j++) {
-			let ycoord = j * squareheight;
-			if (!(positions[j][i] == 0)) {
-				let filename = "images\\" + numToFileName(positions[j][i]) + ".png";
-				let image = new Image();
-				image.src = filename;
-				image.onload = function () {
-					ctx.drawImage(image, xcoord, ycoord, squarewidth, squareheight);
-				}
-			} 
+			drawPiece(i, j);
 		}
 	}
+	if (lastClick !== null) {
+		drawBlankSquare(lastClick.x, lastClick.y, true);
+		drawPiece(lastClick.x, lastClick.y);
+	}
+	console.log(positions)
+}
+
+function minimalRedraw() {
+
+}
+
+window.onload = function () {
+	canvas.addEventListener('click', (e) => {
+
+		const rect = canvas.getBoundingClientRect();
+		const pos = {
+				x: e.clientX,
+				y: e.clientY
+		}
+		let myRect = getBoardSquare(pos, rect);
+		if (lastClick == null) {
+			lastClick = myRect;
+		}
+		else {
+			makeMove(lastClick, myRect);
+			lastClick = null;
+		}
+		redraw();
+	});
+}
+
+
+function getBoardSquare(pos, rect) {
+	const normalizedX = (pos.x - rect.x);
+	const normalizedY = (pos.y - rect.y);
+	const square = {
+		x: Math.floor(normalizedX / squarewidth),
+		y: Math.floor(normalizedY / squarewidth) 
+	}
+	return square;
 }
 
 initBoard();

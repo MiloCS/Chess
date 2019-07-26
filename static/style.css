@@ -34,8 +34,10 @@ tr:hover {
 	background-color: #4a5ad4;
 }
 
-canvas {
-	border: 10px solid #fce9db;
+#gamebackground {
+	background-color: #fce9db;
+	padding: 10px;
+	display: inline-block;
 }
 
 #hider {
