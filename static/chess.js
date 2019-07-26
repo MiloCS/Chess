@@ -17,7 +17,8 @@ const squareheight = height/8
 const white = true;
 let positions;
 
-let lastClick = null
+let lastClick = null;
+let changedPositions = [];
 
 function toCoordinates(letter, number) {
 	return {x: numbers.indexOf(number), y: letters.indexOf(letter)}
@@ -117,7 +118,7 @@ function letterToPieceName(letter) {
 function makeMove(start, end) {
 	let temp = positions[start.x][start.y];
 	positions[end.x][end.y] = temp;
-	if (start.x !== end.x && start.y !== end.y) {
+	if (start.x !== end.x || start.y !== end.y) {
 		positions[start.x][start.y] = 0;
 	}
 }
@@ -161,19 +162,19 @@ function returnStringCommand(command) {
 function drawBlankSquare(i, j, isSelected=false) {
 	if (isSelected) {
 		ctx.fillStyle = "#c85548";
-		ctx.fillRect(i*squarewidth, j*squareheight, (i+1)*squarewidth, (j+1)*squareheight);
+		ctx.fillRect(i*squarewidth, j*squareheight, squarewidth, squareheight);
 		ctx.fillStyle = "white";
 		ctx.fillText(toAlgNotation(i, j), i*squarewidth + 5, (j+1)*squareheight - 5);
 	}
 	else if ((i+j)%2 == 0) {
 		ctx.fillStyle = "#665548";
-		ctx.fillRect(i*squarewidth, j*squareheight, (i+1)*squarewidth, (j+1)*squareheight);
+		ctx.fillRect(i*squarewidth, j*squareheight, squarewidth, squareheight);
 		ctx.fillStyle = "white";
 		ctx.fillText(toAlgNotation(i, j), i*squarewidth + 5, (j+1)*squareheight - 5);
 	}
 	else {
 		ctx.fillStyle = "#d3b6a0";
-		ctx.fillRect(i*squarewidth, j*squareheight, (i+1)*squarewidth, (j+1)*squareheight);
+		ctx.fillRect(i*squarewidth, j*squareheight, squarewidth, squareheight);
 		ctx.fillStyle = "black";
 		ctx.fillText(toAlgNotation(i, j), i*squarewidth + 5, (j+1)*squareheight - 5);
 	}
@@ -209,12 +210,21 @@ function redraw() {
 	if (lastClick !== null) {
 		drawBlankSquare(lastClick.x, lastClick.y, true);
 		drawPiece(lastClick.x, lastClick.y);
+		changedPositions.push(lastClick);
 	}
-	console.log(positions)
 }
 
 function minimalRedraw() {
-
+	changedPositions.forEach((pos) => {
+		drawBlankSquare(pos.x, pos.y);
+		drawPiece(pos.x, pos.y);
+	});
+	changedPositions = [];
+	if (lastClick !== null) {
+		drawBlankSquare(lastClick.x, lastClick.y, true);
+		drawPiece(lastClick.x, lastClick.y);
+		changedPositions.push(lastClick);
+	}
 }
 
 window.onload = function () {
@@ -226,6 +236,7 @@ window.onload = function () {
 				y: e.clientY
 		}
 		let myRect = getBoardSquare(pos, rect);
+		changedPositions.push(myRect);
 		if (lastClick == null) {
 			lastClick = myRect;
 		}
@@ -233,7 +244,7 @@ window.onload = function () {
 			makeMove(lastClick, myRect);
 			lastClick = null;
 		}
-		redraw();
+		minimalRedraw();
 	});
 }
 
