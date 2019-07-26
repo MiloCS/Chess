@@ -116,6 +116,10 @@ function letterToPieceName(letter) {
 }
 
 function makeMove(start, end) {
+	if (!isValidMove(start, end)) {
+		console.log('invalid move');
+		return;
+	}
 	let temp = positions[start.x][start.y];
 	positions[end.x][end.y] = temp;
 	if (start.x !== end.x || start.y !== end.y) {

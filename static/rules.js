@@ -5,7 +5,7 @@ function isValidMove(start, end) {
 	let result = doesNotHitOwnPiece(start, end) &&
 		 validForType(start, end) &&
 		 //remove this and put it in the validForType for Rook and Bishop
-		 noPiecesInWay(start, end) &&
+		 //noPiecesInWay(start, end) &&
 		 kingNotChecked(start, end) &&
 		 doesActuallyMove(start, end);
 	return result;
@@ -43,13 +43,13 @@ function attacking(start, end) {
 }
 
 function isBeingAttacked(location) {
-	let piece = positions[location];
+	let piece = positions[location.x][location.y];
 	let piecesign = sign(piece);
 	for (let i=0; i<8; i++) {
 		for (let j=0; j<8; j++) {
 			if (piece == 0 || sign(positions[i][j]) == piecesign)
 				continue;
-			if(attacking({x:i, y:j}, position)) {
+			if(attacking({x:i, y:j}, positions)) {
 				return true;
 			}
 		}
@@ -63,16 +63,16 @@ function kingNotChecked(start, end) {
 }
 
 function doesNotHitOwnPiece(start, end) {
-	if (positions[start] < 0) {
-		if (positions[end] < 0) {
+	if (positions[start.x][start.y] < 0) {
+		if (positions[start.x][start.y] < 0) {
 			return false;
 		}
 		else {
 			return true;
 		}
 	}
-	else if(positions[start] > 0) {
-		if (positions[end] > 0) {
+	else if(positions[start.x][start.y] > 0) {
+		if (positions[end.x][end.y] > 0) {
 			return false;
 		}
 		else {
@@ -85,22 +85,22 @@ function doesNotHitOwnPiece(start, end) {
 }
 
 function validForType(start, end) {
-	if (positions[start] == 1) {
+	if (positions[start.x][start.y] == 1) {
 		return isValidPawnMove(start, end);
 	}
-	else if (positions[start] == 2) {
+	else if (positions[start.x][start.y] == 2) {
 		return isValidRookMove(start, end);
 	}
-	else if (positions[start] == 3) {
+	else if (positions[start.x][start.y] == 3) {
 		return isValidKnightMove(start, end);
 	}
-	else if (positions[start] == 4) {
+	else if (positions[start.x][start.y] == 4) {
 		return isValidBishopMove(start, end);
 	}
-	else if (positions[start] == 5) {
+	else if (positions[start.x][start.y] == 5) {
 		return isValidQueenMove(start, end);
 	}
-	else if (positions[start] == 6) {
+	else if (positions[start.x][start.y] == 6) {
 		return isValidKingMove(start, end);
 	}
 	else {
@@ -116,7 +116,7 @@ function getSquaresBetween(start, end) {
 	let resultList = new Array();
 	let xcoord = start.x;
 	let ycoord = start.y;
-	for (let i=0; i < Math.max(Math.abs(deltax), Math.abs(deltay)) - 1, i++) {
+	for (let i=0; i < Math.max(Math.abs(deltax), Math.abs(deltay)) - 1; i++) {
 		xcoord += incx;
 		ycoord += incy;
 		resultList.push({x:xcoord, y:ycoord});
@@ -125,16 +125,16 @@ function getSquaresBetween(start, end) {
 }
 
 function isTaking(start, end) {
-	if (positions[start] < 0) {
-		if (positions[end] > 0) {
+	if (positions[start.x][start.y] < 0) {
+		if (positions[end.x][end.y] > 0) {
 			return true;
 		}
 		else {
 			return false;
 		}
 	}
-	else if(positions[start] > 0) {
-		if (positions[end] < 0) {
+	else if(positions[start.x][start.y] > 0) {
+		if (positions[end.x][end.y] < 0) {
 			return true;
 		}
 		else {
@@ -146,16 +146,20 @@ function isTaking(start, end) {
 	}
 }
 
+function average(x, y) {
+	return Math.floor((x+y)/2)
+}
+
 function isValidPawnMove(start, end) {
 	let diffx = Math.abs(start.x - end.x);
 	let deltay = end.y - start.y;
-	if (diffx == 0 && deltay == 1 && positions[end] == 0) {
+	if (diffx == 0 && deltay == -1 && positions[end.x][end.y] == 0) {
 		return true;
 	}
-	if (diffx == 1 && deltay == 1 && isTaking(start, end)) {
+	if (diffx == 1 && deltay == -1 && isTaking(start, end)) {
 		return true;
 	}
-	if (diffx == 0 && deltay == 2 && (start.y == 1 || start.y == 6) && position[start.x][average(start.y, end.y)] == 0) {
+	if (diffx == 0 && deltay == -2 && (start.y == 1 || start.y == 6) && positions[start.x][average(start.y, end.y)] == 0) {
 		return true;
 	}
 	return false;
@@ -163,7 +167,13 @@ function isValidPawnMove(start, end) {
 
 function isValidRookMove(start, end) {
 	if (start.x == end.x || start.y == end.y) {
-		return true;
+		let result = true;
+		getSquaresBetween(start, end).forEach(square => {
+			if (positions[square.x][square.y] !== 0) {
+				result =  false;
+			}
+		});
+		return result;
 	}
 	else {
 		return false;
@@ -174,7 +184,13 @@ function isValidBishopMove(start, end) {
 	let diffx = Math.abs(start.x - end.x);
 	let diffy = Math.abs(start.y - end.y);
 	if (diffx == diffy) {
-		return true;
+		let result = true;
+		getSquaresBetween(start, end).forEach(square => {
+			if (positions[square.x][square.y] !== 0) {
+				result =  false;
+			}
+		});
+		return result;
 	}
 	else {
 		return false;
