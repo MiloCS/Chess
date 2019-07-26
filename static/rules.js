@@ -38,8 +38,7 @@ function doesActuallyMove(start, end) {
 }
 
 function attacking(start, end) {
-	return validForType(start, end) &&
-	       noPiecesInWay(start, end);
+	return validForType(start, end);
 }
 
 function isBeingAttacked(location) {
@@ -49,7 +48,7 @@ function isBeingAttacked(location) {
 		for (let j=0; j<8; j++) {
 			if (piece == 0 || sign(positions[i][j]) == piecesign)
 				continue;
-			if(attacking({x:i, y:j}, positions)) {
+			if(attacking({x:i, y:j}, location)) {
 				return true;
 			}
 		}
@@ -64,7 +63,7 @@ function kingNotChecked(start, end) {
 
 function doesNotHitOwnPiece(start, end) {
 	if (positions[start.x][start.y] < 0) {
-		if (positions[start.x][start.y] < 0) {
+		if (positions[end.x][end.y] < 0) {
 			return false;
 		}
 		else {
@@ -85,22 +84,23 @@ function doesNotHitOwnPiece(start, end) {
 }
 
 function validForType(start, end) {
-	if (positions[start.x][start.y] == 1) {
+	let piecenum = Math.abs(positions[start.x][start.y]);
+	if (piecenum == 1) {
 		return isValidPawnMove(start, end);
 	}
-	else if (positions[start.x][start.y] == 2) {
+	else if (piecenum == 2) {
 		return isValidRookMove(start, end);
 	}
-	else if (positions[start.x][start.y] == 3) {
+	else if (piecenum == 3) {
 		return isValidKnightMove(start, end);
 	}
-	else if (positions[start.x][start.y] == 4) {
+	else if (piecenum == 4) {
 		return isValidBishopMove(start, end);
 	}
-	else if (positions[start.x][start.y] == 5) {
+	else if (piecenum == 5) {
 		return isValidQueenMove(start, end);
 	}
-	else if (positions[start.x][start.y] == 6) {
+	else if (piecenum == 6) {
 		return isValidKingMove(start, end);
 	}
 	else {
@@ -153,13 +153,14 @@ function average(x, y) {
 function isValidPawnMove(start, end) {
 	let diffx = Math.abs(start.x - end.x);
 	let deltay = end.y - start.y;
-	if (diffx == 0 && deltay == -1 && positions[end.x][end.y] == 0) {
+	let startsign = -1 * sign(positions[start.x][start.y]);
+	if (diffx == 0 && deltay == startsign && positions[end.x][end.y] == 0) {
 		return true;
 	}
-	if (diffx == 1 && deltay == -1 && isTaking(start, end)) {
+	if (diffx == 1 && deltay == startsign && isTaking(start, end)) {
 		return true;
 	}
-	if (diffx == 0 && deltay == -2 && (start.y == 1 || start.y == 6) && positions[start.x][average(start.y, end.y)] == 0) {
+	if (diffx == 0 && deltay == 2 * startsign && (start.y == 1 || start.y == 6) && positions[start.x][average(start.y, end.y)] == 0) {
 		return true;
 	}
 	return false;
@@ -201,8 +202,9 @@ function isValidKnightMove(start, end) {
 	let diffx = Math.abs(start.x - end.x);
 	let diffy = Math.abs(start.y - end.y);
 	if ((diffx == 2 && diffy == 1) || (diffy == 2 && diffx == 1)) {
-		return false;
+		return true;
 	}
+	return false;
 }
 
 function isValidQueenMove(start, end) {
