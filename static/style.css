@@ -55,6 +55,10 @@ tr:hover {
 	cursor: pointer;
 }
 
+div#dialog {
+	background: blue;
+}
+
 div#loading {
 	display: inline-block;
 	border: 3px solid hsla(12, 100%, 77%, 1);

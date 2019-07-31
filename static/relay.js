@@ -25,3 +25,14 @@ $( "#shower" ).click(function () {
 	$( "#shower" ).hide();
 });
 
+
+$("div#dialog").dialog ({
+  autoOpen : false
+});
+
+//castling dialog box
+async function castleChoose() {
+	let selected = 0;
+	$('#dialog').dialog('open');
+	return selected;
+}

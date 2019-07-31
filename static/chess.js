@@ -115,18 +115,6 @@ function letterToPieceName(letter) {
 	}
 }
 
-function makeMove(start, end) {
-	if (!isValidMove(start, end)) {
-		console.log('invalid move');
-		return;
-	}
-	let temp = positions[start.x][start.y];
-	positions[end.x][end.y] = temp;
-	if (start.x !== end.x || start.y !== end.y) {
-		positions[start.x][start.y] = 0;
-	}
-}
-
 //regex to check for validity of any algebraic expression: /^(O-O-O|O-O|(([prnbqk]?x?)([abcdefgh]x?)[abcdefgh][0-8])\+?)$/i
 function returnStringCommand(command) {
 	if (/^[prnbqk]x[abcdefgh][0-8]\+?$/i.test(command)) {

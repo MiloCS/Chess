@@ -1,5 +1,17 @@
 //should be updated on king movement
-let kingPosition = {x: 4, y:0};
+let blackKingPosition = {x: 4, y:0};
+let whiteKingPosition = {x: 3, y:7};
+
+let lastMove = null;
+
+let movedFlags = {
+	blackKing = false;
+	whiteKing = false;
+	whiteKSRook = false;
+	whiteQSRook = false;
+	blackKSRook = false;
+	blackQSRook = false;
+}
 
 function isValidMove(start, end) {
 	let result = doesNotHitOwnPiece(start, end) &&
@@ -57,8 +69,29 @@ function isBeingAttacked(location) {
 }
 
 function kingNotChecked(start, end) {
-	//deep copy of positions array, make the move
-	return !isBeingAttacked(kingPosition);
+	let currentstart = positions[start.x][start.y];
+	let currentend = positions[end.x][end.y];
+
+	if (currentstart == 6) {
+		whiteKingPosition = end;
+	}
+	if (currentstart == -6) {
+		blackKingPosition = end;
+	}
+	//fake moving the piece to check checking
+	positions[start.x][start.y] = 0;
+	positions[end.x][end.y] = currentstart;
+
+	let result = !isBeingAttacked(sign(currentstart) == -1 ? blackKingPosition : whiteKingPosition);
+	positions[start.x][start.y] = currentstart;
+	positions[end.x][end.y] = currentend;
+	if (currentstart == 6) {
+		whiteKingPosition = start;
+	}
+	if (currentstart == -6) {
+		blackKingPosition = start;
+	}
+	return result;
 }
 
 function doesNotHitOwnPiece(start, end) {
@@ -157,7 +190,7 @@ function isValidPawnMove(start, end) {
 	if (diffx == 0 && deltay == startsign && positions[end.x][end.y] == 0) {
 		return true;
 	}
-	if (diffx == 1 && deltay == startsign && isTaking(start, end)) {
+	if (diffx == 1 && deltay == startsign && (isTaking(start, end) || isEnPassant(start, end))) {
 		return true;
 	}
 	if (diffx == 0 && deltay == 2 * startsign && (start.y == 1 || start.y == 6) && positions[start.x][average(start.y, end.y)] == 0) {
@@ -215,4 +248,73 @@ function isValidKingMove(start, end) {
 	let diffx = Math.abs(start.x - end.x);
 	let diffy = Math.abs(start.y - end.y);
 	return (diffx <= 1) && (diffy <= 1);
+}
+
+////function to actually make moves on the board
+function makeMove(start, end) {
+	if (!isValidMove(start, end)) {
+		console.log('invalid move');
+		return;
+	}
+	let temp = positions[start.x][start.y];
+	//updating king position
+	if (temp == 6) {
+		whiteKingPosition = end;
+	}
+	if (temp == -6) {
+		blackKingPosition = end;
+	}
+
+	//special cases: pawn promotion, en passant, castling
+	if (isPromoting(start, end)) {
+		let choice = 5 //await castleChoose();
+		temp = sign(temp) * choice;
+	}
+	if (isEnPassant(start, end)) {
+		let positionBeingTaken = {x:end.x, y:start.y}
+		console.log(positionBeingTaken);
+		positions[end.x][start.y] = 0;
+		changedPositions.push(positionBeingTaken);
+	}
+	//actual movement of piece in board
+	positions[end.x][end.y] = temp;
+	if (start.x !== end.x || start.y !== end.y) {
+		positions[start.x][start.y] = 0;
+	}
+	setLastMove(start, end);
+}
+
+function setLastMove(start, end) {
+	if (lastMove !== null) {
+		lastMove.start = start;
+		lastMove.end = end;
+	}
+	else {
+		lastMove = {start: start, end: end}
+	}
+}
+
+function isEnPassant(start, end) {
+	let diffx = Math.abs(start.x - end.x);
+	let diffy = Math.abs(start.y - end.y);
+	let positionBeingTaken = {x:end.x, y:start.y}
+	if ((diffx !== 1) || (diffy !== 1)) {
+		return false;
+	}
+	if (!isTaking(start, positionBeingTaken)) {
+		return false;
+	}
+	if(!((start.y == 3 || start.y == 4) && (end.y == 2 || end.y == 5))) {
+		return false;
+	}
+	if (!((lastMove.start.y == 1 || lastMove.start.y == 6) && (lastMove.start.x == end.x && lastMove.end.x == end.x) && lastMove.end.y == start.y)) {
+		return false;
+	}
+	console.log()
+	return true;
+}
+
+//functions for handling special cases: castling, en passant, and pawn promotion
+function isPromoting(start, end) {
+	return ((start.y == 1 || start.y == 6) && (end.y == 0 || end.y == 7) && Math.abs(positions[start.x][start.y]) == 1)
 }
