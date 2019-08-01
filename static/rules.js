@@ -5,12 +5,42 @@ let whiteKingPosition = {x: 3, y:7};
 let lastMove = null;
 
 let movedFlags = {
-	blackKing = false;
-	whiteKing = false;
-	whiteKSRook = false;
-	whiteQSRook = false;
-	blackKSRook = false;
-	blackQSRook = false;
+	blackKing : false,
+	whiteKing : false,
+	whiteKSRook : false,
+	whiteQSRook : false,
+	blackKSRook : false,
+	blackQSRook : false
+}
+
+let flaggedPositions = {
+	blackKing : null,
+	whiteKing : null,
+	whiteKSRook : null,
+	whiteQSRook : null,
+	blackKSRook : null,
+	blackQSRook : null
+}
+
+//to-do:
+//update-flagged-positions function?
+//migrate black/whiteKing references to the flagged positions
+//overlay for promotion choice
+//castling checking function
+//castling movement function
+//castling buttons
+
+function setFlaggedPositions() {
+	for (let i = 0; i < positions.length; i++) {
+		for (let j = 0; j < positions.length; j++) {
+			if (positions[i][j] == 2) {
+
+			}
+			else if (positions[i][j]) {
+
+			}
+		}
+	}
 }
 
 function isValidMove(start, end) {
@@ -55,10 +85,13 @@ function attacking(start, end) {
 
 function isBeingAttacked(location) {
 	let piece = positions[location.x][location.y];
+	if (piece == 0) {
+		return false;
+	}
 	let piecesign = sign(piece);
 	for (let i=0; i<8; i++) {
 		for (let j=0; j<8; j++) {
-			if (piece == 0 || sign(positions[i][j]) == piecesign)
+			if (positions[i][j] == 0 || sign(positions[i][j]) == piecesign)
 				continue;
 			if(attacking({x:i, y:j}, location)) {
 				return true;
@@ -267,8 +300,10 @@ function makeMove(start, end) {
 
 	//special cases: pawn promotion, en passant, castling
 	if (isPromoting(start, end)) {
-		let choice = 5 //await castleChoose();
-		temp = sign(temp) * choice;
+		// let choice = 5 //await castleChoose();
+		// temp = sign(temp) * choice;
+		promotionChoice(start, end);
+		return;
 	}
 	if (isEnPassant(start, end)) {
 		let positionBeingTaken = {x:end.x, y:start.y}

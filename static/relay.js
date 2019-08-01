@@ -14,6 +14,9 @@ $( "#submitcommand" ).click(function () {
 	}, 1000);
 });
 
+let promotionStart = null;
+let promotionEnd = null;
+
 
 $( "#hider" ).click(function () {
 	$( "#gamelog-sidebar" ).hide();
@@ -25,14 +28,61 @@ $( "#shower" ).click(function () {
 	$( "#shower" ).hide();
 });
 
+let modal = document.getElementById('myModal');
+let modalClose = document.getElementsByClassName("close")[0]
 
-$("div#dialog").dialog ({
-  autoOpen : false
+$("#myBtn").click(function() {
+  modal.style.display = "block";
 });
 
-//castling dialog box
-async function castleChoose() {
-	let selected = 0;
-	$('#dialog').dialog('open');
-	return selected;
+function closeModal() {
+	modal.style.display = "none";
+	promotionStart = null;
+	promotionEnd = null;
 }
+
+modalClose.onclick = function() {
+  closeModal();
+}
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    closeModal();
+  }
+}
+
+//castling dialog box
+function promotionChoice(start, end) {
+	promotionStart = start;
+	promotionEnd = end;
+	modal.style.display = "block";
+}
+
+function promote(num) {
+	if (promotionStart !== null && promotionEnd !== null) {
+		let pawnBeingPromoted = positions[promotionStart.x][promotionStart.y];
+		let sign = pawnBeingPromoted; //sign(pawnBeingPromoted);
+		positions[promotionStart.x][promotionStart.y] = 0;
+		positions[promotionEnd.x][promotionEnd.y] = num * sign;
+		changedPositions.push(promotionStart);
+		changedPositions.push(promotionEnd);
+		minimalRedraw();
+	}
+	closeModal();
+}
+
+$("#queenpromote").click(function () {
+	promote(5);
+});
+
+$("#bishoppromote").click(function () {
+	promote(4);
+});
+
+$("#rookpromote").click(function () {
+	promote(2);
+});
+
+$("#knightpromote").click(function () {
+	promote(3);
+});

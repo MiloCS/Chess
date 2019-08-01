@@ -230,7 +230,9 @@ window.onload = function () {
 		let myRect = getBoardSquare(pos, rect);
 		changedPositions.push(myRect);
 		if (lastClick == null) {
-			lastClick = myRect;
+			if (positions[myRect.x][myRect.y] !== 0) {
+				lastClick = myRect;
+			}
 		}
 		else {
 			makeMove(lastClick, myRect);
