@@ -86,3 +86,11 @@ $("#rookpromote").click(function () {
 $("#knightpromote").click(function () {
 	promote(3);
 });
+
+$("#ks").click(function () {
+	console.log("kingside");
+});
+
+$("#qs").click(function () {
+	console.log("queenside");
+});
