@@ -50,5 +50,9 @@ def new_game():
 	#implement this once sessions are implemented
 	return 'success'
 
+@app.route('/makemove')
+def make_move():
+	print()
+
 if __name__ == "__main__":
 	app.run(threaded=True)

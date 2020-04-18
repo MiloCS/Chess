@@ -1,2 +1,4 @@
 engine/game.exe
 engine/game.o
+package-lock.json
+node_modules/
